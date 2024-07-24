@@ -4,5 +4,9 @@
 
 {% block body %}
     <h1>{{ title }}</h1>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. At autem, debitis dolores dolorum ipsum minus praesentium provident similique unde voluptas?</p>
+    <h2>{{ wish.title }}</h2>
+    <p>Description : {{ wish.description }}</p>
+    <p>Auteur : {{ wish.author }}</p>
+    <p>Publié : {{ wish.isPublished ? 'Oui' : 'Non' }}</p>
+    <p>Créée le : {{ wish.createdAt | date('d/m/Y H:i') }}</p>
 {% endblock %}
