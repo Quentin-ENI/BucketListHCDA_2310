@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Home{% endblock %}
+
+{% block body %}
+    <h1>{{ title }}</h1>
+    <section class="team-member">
+        {% for person in team %}
+            <article>
+                <img src="{{ person.picture }}" alt="{{ person.lastname }}">
+                <div>
+                    <h3>{{ person.lastname }} {{ person.firstname }}
+                        {# Short ternaire #}
+                        {{ person.firstname == "Fabien" ? "&#128151" : "" }}
+                        {# Long #}
+                        {# doc : https://twig.symfony.com/doc/2.x/tests/sameas.html #}
+{#                        {% if person.firstname is same as "Fabien" %}#}
+{#                            &#128151#}
+{#                        {% endif %}#}
+                    </h3>
+                    <p> Creator of {{ person.creatorOf }}</p>
+                    <p>Date of birth : {{ person.dateOfBirth }}</p>
+                    <p>{{ person.description }}</p>
+                </div>
+            </article>
+        {% endfor %}
+    </section>
+{% endblock %}
