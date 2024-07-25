@@ -29,6 +29,12 @@ class Wish
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->isPublished = false;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
