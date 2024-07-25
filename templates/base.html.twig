@@ -26,6 +26,7 @@
         {% include 'partials/_header.html.twig' %}
         <main>
             <div class="container">
+                {{ include('partials/_toast.html.twig') }}
                 {% block body %}{% endblock %}
             </div>
         </main>
