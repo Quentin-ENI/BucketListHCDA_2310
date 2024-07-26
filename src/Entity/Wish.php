@@ -32,6 +32,11 @@ class Wish
     #[ORM\Column(options: ['default' => true])]
     private ?bool $published = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $thumbnail = null;
+
+    private ?string $thumbnailFile = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -99,6 +104,30 @@ class Wish
     public function setPublished(bool $published): static
     {
         $this->published = $published;
+
+        return $this;
+    }
+
+    public function getThumbnail(): ?string
+    {
+        return $this->thumbnail;
+    }
+
+    public function setThumbnail(?string $thumbnail): static
+    {
+        $this->thumbnail = $thumbnail;
+
+        return $this;
+    }
+
+    public function getThumbnailFile(): ?string
+    {
+        return $this->thumbnailFile;
+    }
+
+    public function setThumbnailFile(?string $thumbnailFile): static
+    {
+        $this->thumbnailFile = $thumbnailFile;
 
         return $this;
     }

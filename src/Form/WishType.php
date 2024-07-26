@@ -5,11 +5,14 @@ namespace App\Form;
 use App\Entity\Wish;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Image;
 
 class WishType extends AbstractType
 {
@@ -24,6 +27,23 @@ class WishType extends AbstractType
             ])
             ->add('author', TextType::class, [
                 'label' => 'Auteur'
+            ])
+            ->add('thumbnail', HiddenType::class)
+            ->add('thumbnailFile', FileType::class, [
+                'label' => 'Image',
+                'required' => false,
+                 'mapped' => false,
+                 'constraints' => [
+                     new Image([
+                         'maxSize' => '1024k',
+                         'maxSizeMessage' => 'La taille de l\'image est trop grande',
+                         'mimeTypes' => [
+                             'image/jpg',
+                             'image/png'
+                         ],
+                         'mimeTypesMessage' => 'Le format de l\'image n\'est pas valide'
+                     ])
+                 ]
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Ajouter un Souhait'
