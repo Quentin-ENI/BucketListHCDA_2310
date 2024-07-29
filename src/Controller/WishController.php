@@ -124,4 +124,17 @@ class WishController extends AbstractController
             'formWish' => $wishForm
         ]);
     }
+
+    #[Route('/{id}/delete', name: 'delete', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    public function delete(Wish $wish): Response
+    {
+        if (!$wish) {
+            throw $this->createNotFoundException('Ce wish n\'existe pas !!');
+        }
+
+        $this->em->remove($wish);
+        $this->em->flush();
+        $this->addFlash('success', 'Wish a été supprimé avec succes !!');
+        return $this->redirectToRoute('app_wish_list');
+    }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Category;
 use App\Entity\Wish;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -44,6 +46,11 @@ class WishType extends AbstractType
                          'mimeTypesMessage' => 'Le format de l\'image n\'est pas valide'
                      ])
                  ]
+            ])
+            ->add('category', EntityType::class, [
+                'class' => Category::class,
+                'choice_label' => 'name',
+                'placeholder' => '-- Sélectionnez la catégorie --'
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Ajouter un Souhait'
