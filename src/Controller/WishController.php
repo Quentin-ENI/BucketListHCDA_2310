@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Comment;
 use App\Entity\Wish;
+use App\Form\CommentType;
 use App\Form\WishType;
 use App\Repository\WishRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -71,16 +73,34 @@ class WishController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'detail', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[Route('/{id}', name: 'detail', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
 //    public function detail(int $id, WishRepository $wishRepository): Response
-    public function detail(Wish $wish): Response
+    public function detail(
+        Wish $wish,
+        Request $request
+    ): Response
     {
         if (!$wish) {
             throw $this->createNotFoundException('Ce wish n\'existe pas !!');
         }
+
+        $comment = new Comment();
+        $commentForm = $this->createForm(CommentType::class, $comment);
+        $commentForm->handleRequest($request);
+
+        if ($commentForm->isSubmitted() && $commentForm->isValid()) {
+            $comment->setAuthor($this->getUser());
+            $comment->setCreatedAt(new \DateTimeImmutable());
+            $comment->setWish($wish);
+
+            $this->em->persist($comment);
+            $this->em->flush();
+        }
+
         return $this->render('wish/detail.html.twig', [
             'title' => 'Wish Detail',
-            'wish' => $wish
+            'wish' => $wish,
+            'commentForm' => $commentForm
         ]);
     }
 

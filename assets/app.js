@@ -12,3 +12,6 @@ import confetti from 'canvas-confetti';
 document.getElementById('logo').addEventListener('click', () => confetti())
 
 console.log('Hello')
+
+// assets/app.js
+import 'bootstrap/dist/css/bootstrap.min.css';

@@ -15,4 +15,21 @@
     {% if app.user and (app.user.username == wish.author or is_granted("ROLE_ADMIN")) %}
         <a href="{{ path('app_wish_delete', {id: wish.id}) }}"><button>Supprimer</button></a>
     {% endif %}
+    <br>
+    {% if app.user %}
+        <a href="{{ path('app_comment_new') }}"><button class="btn btn-success">Ajouter un commentaire</button></a>
+    {% endif %}
+    <ul>
+        {% for comment in wish.comments %}
+            <li>
+                [{{ comment.grade }}]  {{ comment.content }} - {{ comment.author.username }} [{{ comment.createdAt | date("d-M-Y") }}]
+                {% if app.user and comment.author == app.user %}
+                    <button class="btn btn-warning">Modifier</button>
+                {% endif %}
+                {% if app.user and (comment.author == app.user or is_granted("ROLE_ADMIN")) %}
+                    <button class="btn btn-danger">Supprimer</button>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}
