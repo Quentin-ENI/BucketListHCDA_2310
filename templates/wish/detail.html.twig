@@ -9,6 +9,10 @@
     <p>Auteur : {{ wish.author }}</p>
     <p>Publié : {{ wish.isPublished ? 'Oui' : 'Non' }}</p>
     <p>Créée le : {{ wish.createdAt | date('d/m/Y H:i') }}</p>
-    <a href="{{ path('app_wish_edit', {id: wish.id}) }}"><button>Modifier</button></a>
-    <a href="{{ path('app_wish_delete', {id: wish.id}) }}"><button>Supprimer</button></a>
+    {% if app.user and app.user.username == wish.author %}
+            <a href="{{ path('app_wish_edit', {id: wish.id}) }}"><button>Modifier</button></a>
+    {% endif %}
+    {% if app.user and (app.user.username == wish.author or is_granted("ROLE_ADMIN")) %}
+        <a href="{{ path('app_wish_delete', {id: wish.id}) }}"><button>Supprimer</button></a>
+    {% endif %}
 {% endblock %}

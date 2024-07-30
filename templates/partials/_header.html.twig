@@ -8,8 +8,17 @@
         <nav class="header-nav">
             <a href="{{ path('app_home') }}" title="Go back to homepage">Home</a>
             <a href="{{ path('app_wish_list') }}" title="Go back to about">Wish List</a>
-            <a href="{{ path('app_wish_add') }}" title="Go back to about">Wish Add</a>
+            {% if app.user %}
+                <a href="{{ path('app_wish_add') }}" title="Go back to about">Wish Add</a>
+            {% endif %}
             <a href="{{ path('app_about_us') }}" title="Go back to about">About Us</a>
+            {% if app.user %}
+                <a href="{{ path('app_logout') }}">Logout</a>
+                <a href="#">Hello {{ app.user.username }}</a>
+            {% else %}
+                <a href="{{ path('app_login') }}">Login</a>
+                <a href="{{ path('app_register') }}">Register</a>
+            {% endif %}
         </nav>
     </div>
 </header>

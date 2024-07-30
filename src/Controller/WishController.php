@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/wish', name: 'app_wish_')]
@@ -32,12 +33,14 @@ class WishController extends AbstractController
     }
 
     #[Route('/add', name: 'add', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function add(Request $request, EntityManagerInterface $em): Response
     {
         $wish = new Wish();
         $wishForm = $this->createForm(WishType::class, $wish);
         $wishForm->handleRequest($request);
         if ($wishForm->isSubmitted() && $wishForm->isValid()) {
+            $wish->setAuthor($this->getUser()->getUserIdentifier());
             $thumbnailFile = $wishForm->get('thumbnailFile')->getData();
             if ($thumbnailFile !== null) {
                 // #TODO On commence sérieusement à se répéter, il serait temps de faire un service
@@ -82,10 +85,20 @@ class WishController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[IsGranted("ROLE_USER")]
     public function edit(Wish $wish, Request $request): Response
     {
         if (!$wish) {
-            throw $this->createNotFoundException('Ce wish n\'existe pas !!');}
+            throw $this->createNotFoundException('Ce wish n\'existe pas !!');
+        }
+
+
+        $isAdmin = in_array('ROLE_ADMIN', $this->getUser()->getRoles());
+        $isAuthor = $this->getUser()->getUserIdentifier() == $wish->getAuthor();
+
+        if (!($isAdmin and $isAuthor)) {
+            $this->denyAccessUnlessGranted("Modification impossible");
+        }
 
         // Valid edit form
         $wishForm = $this->createForm(WishType::class, $wish);
@@ -132,9 +145,17 @@ class WishController extends AbstractController
             throw $this->createNotFoundException('Ce wish n\'existe pas !!');
         }
 
-        $this->em->remove($wish);
-        $this->em->flush();
-        $this->addFlash('success', 'Wish a été supprimé avec succes !!');
+        $isRoleUser = in_array('ROLE_USER', $this->getUser()->getRoles());
+        $isAuthor = $wish->getAuthor() == $this->getUser()->getUserIdentifier();
+
+        if ($isRoleUser or $isAuthor) {
+            $this->em->remove($wish);
+            $this->em->flush();
+            $this->addFlash('success', 'Wish a été supprimé avec succes !!');
+        } else {
+            $this->addFlash('alert', "Le souhait n'a pas été supprimé");
+        }
+
         return $this->redirectToRoute('app_wish_list');
     }
 }

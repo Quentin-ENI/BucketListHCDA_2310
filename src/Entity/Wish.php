@@ -23,7 +23,7 @@ class Wish
     private ?string $description = null;
 
     #[ORM\Column(length: 50)]
-    #[Assert\NotBlank(message: 'L\'author du souhait est obligatoire')]
+//    #[Assert\NotBlank(message: 'L\'author du souhait est obligatoire')]
     private ?string $author = null;
 
     #[ORM\Column]

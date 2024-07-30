@@ -27,9 +27,6 @@ class WishType extends AbstractType
             ->add('description', TextareaType::class, [
                 'label' => 'Description de votre souhait'
             ])
-            ->add('author', TextType::class, [
-                'label' => 'Auteur'
-            ])
             ->add('thumbnail', HiddenType::class)
             ->add('thumbnailFile', FileType::class, [
                 'label' => 'Image',
