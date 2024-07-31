@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello EventController!{% endblock %}
+
+{% block body %}
+    <h1>Recherche d'évènements</h1>
+    {{ form(searchEventForm) }}
+    {% for event in events.records %}
+        <p>{{ event.fields.location_name }}</p>
+    {% else %}
+        <p>Pas d'évènements</p>
+    {% endfor %}
+{% endblock %}
