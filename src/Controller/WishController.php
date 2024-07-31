@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Wish;
 use App\Form\WishType;
 use App\Repository\WishRepository;
+use App\Service\CensuratorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -34,7 +35,11 @@ class WishController extends AbstractController
 
     #[Route('/add', name: 'add', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-    public function add(Request $request, EntityManagerInterface $em): Response
+    public function add(
+        Request $request,
+        EntityManagerInterface $em,
+        CensuratorService $censuratorService
+    ): Response
     {
         $wish = new Wish();
         $wishForm = $this->createForm(WishType::class, $wish);
@@ -59,6 +64,9 @@ class WishController extends AbstractController
                     dd($e);
                 }
             }
+
+            $wish->setTitle($censuratorService->purify($wish->getTitle()));
+            $wish->setDescription($censuratorService->purify($wish->getDescription()));
 
             $this->em->persist($wish);
             $this->em->flush();
@@ -86,7 +94,11 @@ class WishController extends AbstractController
 
     #[Route('/{id}/edit', name: 'edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted("ROLE_USER")]
-    public function edit(Wish $wish, Request $request): Response
+    public function edit(
+        Wish $wish,
+        Request $request,
+        CensuratorService $censuratorService
+    ): Response
     {
         if (!$wish) {
             throw $this->createNotFoundException('Ce wish n\'existe pas !!');
@@ -96,7 +108,7 @@ class WishController extends AbstractController
         $isAdmin = in_array('ROLE_ADMIN', $this->getUser()->getRoles());
         $isAuthor = $this->getUser()->getUserIdentifier() == $wish->getAuthor();
 
-        if (!($isAdmin and $isAuthor)) {
+        if (!($isAdmin or $isAuthor)) {
             $this->denyAccessUnlessGranted("Modification impossible");
         }
 
@@ -127,6 +139,10 @@ class WishController extends AbstractController
                     dd($e);
                 }
             }
+
+
+            $wish->setTitle($censuratorService->purify($wish->getTitle()));
+            $wish->setDescription($censuratorService->purify($wish->getDescription()));
 
             $this->em->flush();
             $this->addFlash('success', 'Wish modifié avec succes !!');
