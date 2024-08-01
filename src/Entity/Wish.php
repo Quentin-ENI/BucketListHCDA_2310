@@ -2,34 +2,50 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\WishRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: WishRepository::class)]
+#[ApiResource(
+    operations: [
+        new Get(normalizationContext: ['groups' => ['getWish']]),
+        new GetCollection(normalizationContext: ['groups' => ['getWish']])
+    ]
+)]
 class Wish
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['getWish'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 250)]
     #[Assert\NotBlank(message: 'Le titre du souhait est obligatoire')]
+    #[Groups(['getWish'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['getWish'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 50)]
 //    #[Assert\NotBlank(message: 'L\'author du souhait est obligatoire')]
+    #[Groups(['getWish'])]
     private ?string $author = null;
 
     #[ORM\Column]
+    #[Groups(['getWish'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(options: ['default' => true])]
+    #[Groups(['getWish'])]
     private ?bool $published = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -38,6 +54,7 @@ class Wish
     private ?string $thumbnailFile = null;
 
     #[ORM\ManyToOne(inversedBy: 'wishes')]
+    #[Groups(['getWish'])]
     private ?Category $category = null;
 
     public function __construct()
