@@ -6,7 +6,10 @@
     <h1>Recherche d'évènements</h1>
     {{ form(searchEventForm) }}
     {% for event in events.records %}
+        <p><b>{{ event.fields.title_fr }}</b></p>
         <p>{{ event.fields.location_name }}</p>
+        <p>{{ event.fields.location_address }}</p>
+        <p>{{ event.fields.description_fr }}</p
     {% else %}
         <p>Pas d'évènements</p>
     {% endfor %}

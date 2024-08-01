@@ -23,7 +23,9 @@ class EventController extends AbstractController
         $searchEventForm = $this->createForm(SearchEventType::class, $searchEvent);
         $searchEventForm->handleRequest($request);
 
-        $events = [];
+        $events = [
+            'records' => []
+        ];
 
         if ($searchEventForm->isSubmitted() && $searchEventForm->isValid()) {
             $events = $eventApiService->search($searchEvent);
